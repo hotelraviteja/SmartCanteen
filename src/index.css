@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* Enable class-based dark mode in Tailwind CSS v4 */
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-heading: "Poppins", system-ui, -apple-system, sans-serif;
+
+  /* CampusBite Brand HSL colors */
+  --color-brand: #FC8019;
+  --color-brand-hover: #E36D0B;
+  --color-brand-light: #FFF8F1;
+  --color-brand-light-hover: #FFF1E2;
+
+  /* Premium Light Theme Colors */
+  --color-canvas-light: #FAF8F5;
+  --color-panel-light: #FFFFFF;
+  --color-border-light: #EFECE6;
+
+  /* Premium Dark Theme Colors (Stripe/Linear deep dark metallic blue) */
+  --color-canvas-dark: #08090C;
+  --color-panel-dark: #0F1116;
+  --color-border-dark: #1E222B;
+  --color-text-dark-muted: #8E939E;
+
+  /* Utility alerts */
+  --color-success: #10B981;
+  --color-error: #EF4444;
+
+  /* Custom Smooth Animations */
+  --animate-shimmer: shimmer 2s infinite linear;
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  --animate-shake: shake 0.4s ease-in-out;
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+  }
+
+  --animate-float: float 6s ease-in-out infinite;
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(1.5deg); }
+  }
+
+  --animate-float-slow: float-slow 8s ease-in-out infinite;
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-16px) rotate(-1.5deg); }
+  }
+
+  --animate-pulse-glow: pulse-glow 3s infinite ease-in-out;
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.05); }
+  }
+}
+
+/* Global resets & Custom Base styles */
+@layer base {
+  html, body {
+    @apply font-sans m-0 p-0 antialiased overflow-x-hidden min-h-screen transition-colors duration-300;
+  }
+  
+  body {
+    @apply bg-canvas-light text-neutral-900;
+  }
+  
+  html.dark body {
+    @apply bg-canvas-dark text-neutral-100;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-200 dark:bg-neutral-800 rounded-full hover:bg-neutral-300 dark:hover:bg-neutral-700 transition-colors;
+  }
+}
+
+/* Premium UI Panels (Stripe / Airbnb style) */
+.glass-panel {
+  @apply bg-white dark:bg-panel-dark border border-border-light dark:border-border-dark shadow-sm shadow-neutral-100/50 dark:shadow-none transition-all duration-300 rounded-3xl;
+}
+
+.glass-panel-heavy {
+  @apply bg-white dark:bg-panel-dark border border-border-light dark:border-border-dark shadow-xl dark:shadow-none transition-all duration-300 rounded-3xl;
+}
+
+/* Form input styling overrides (Stripe dashboard inputs style) */
+.premium-input {
+  @apply w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-panel-dark/50 backdrop-blur-md outline-none text-neutral-800 dark:text-neutral-100 text-sm font-medium transition-all duration-200 focus:border-brand dark:focus:border-brand focus:ring-2 focus:ring-brand/15 dark:focus:ring-brand/20;
+}
+
+.premium-button {
+  @apply flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-white bg-brand hover:bg-brand-hover shadow-sm hover:shadow-lg hover:shadow-brand/25 dark:hover:shadow-none transition-all duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed;
+}
+
+.premium-button-secondary {
+  @apply flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-panel-dark/40 hover:bg-neutral-100/80 dark:hover:bg-neutral-800 transition-all duration-250 cursor-pointer;
+}
+
+/* Custom veg toggle switcher glow */
+.veg-glow {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.dark .veg-glow {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+/* Stepper connection line */
+.stepper-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    #e5e7eb,
+    #e5e7eb 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+.dark .stepper-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    #1e222b,
+    #1e222b 4px,
+    transparent 4px,
+    transparent 8px
+  );
+}
+
+/* Shimmer background */
+.shimmer-bg {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+}
+
+.dark .shimmer-bg {
+  background: linear-gradient(90deg, #0f1116 25%, #1e222b 50%, #0f1116 75%);
+  background-size: 200% 100%;
+}
