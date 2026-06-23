@@ -1,0 +1,70 @@
+{
+  "results": [
+    {
+      "testName": "Signup - Create student account and redirect",
+      "passed": false,
+      "error": "unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:47:36.136Z"
+    },
+    {
+      "testName": "Login - Login with student account",
+      "passed": false,
+      "error": "unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:47:36.417Z"
+    },
+    {
+      "testName": "Dashboard - Deposit money to wallet",
+      "passed": false,
+      "error": "no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"button[title=\"Add Cash\"]\"}\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:47:46.453Z"
+    },
+    {
+      "testName": "Dashboard - Add menu item to cart",
+      "passed": false,
+      "error": "No menu items available with an \"ADD\" button",
+      "timestamp": "2026-06-23T07:47:56.483Z"
+    },
+    {
+      "testName": "Dashboard - Pay & Generate Token",
+      "passed": false,
+      "error": "no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//button[contains(text(), 'Pay & Generate Pass')]\"}\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:48:06.527Z"
+    },
+    {
+      "testName": "Dashboard - Claim and pick up order",
+      "passed": false,
+      "error": "No claim order buttons found",
+      "timestamp": "2026-06-23T07:48:16.580Z"
+    },
+    {
+      "testName": "Dashboard - Open notifications panel",
+      "passed": false,
+      "error": "no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"button[aria-label=\"View notifications\"]\"}\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:48:26.629Z"
+    },
+    {
+      "testName": "Simulation - Session Timeout redirection",
+      "passed": false,
+      "error": "no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//button[contains(text(), 'Expire')]\"}\n  (Session info: chrome=149.0.7827.115)",
+      "timestamp": "2026-06-23T07:48:36.687Z"
+    }
+  ],
+  "logs": [
+    "[2026-06-23T07:47:29.407Z] [INFO] Initializing WebDriver...",
+    "[2026-06-23T07:47:31.208Z] [INFO] WebDriver initialized successfully in headed mode",
+    "[2026-06-23T07:47:31.211Z] [INFO] Starting Signup test...",
+    "[2026-06-23T07:47:31.212Z] [INFO] Navigating to register page at http://localhost:5174/auth/register",
+    "[2026-06-23T07:47:36.146Z] [INFO] Starting Login test...",
+    "[2026-06-23T07:47:36.157Z] [INFO] Navigating to login page...",
+    "[2026-06-23T07:47:36.425Z] [INFO] Testing wallet deposit...",
+    "[2026-06-23T07:47:46.457Z] [INFO] Testing adding menu items to cart...",
+    "[2026-06-23T07:47:56.483Z] [INFO] Found 0 menu items available to add",
+    "[2026-06-23T07:47:56.487Z] [INFO] Testing checkout payment and token generation...",
+    "[2026-06-23T07:48:06.530Z] [INFO] Testing token pickup collection...",
+    "[2026-06-23T07:48:16.584Z] [INFO] Testing notifications menu toggle...",
+    "[2026-06-23T07:48:26.633Z] [INFO] Testing simulated session timeout...",
+    "[2026-06-23T07:48:36.691Z] [INFO] Closing WebDriver..."
+  ],
+  "passed": 0,
+  "failed": 8
+}

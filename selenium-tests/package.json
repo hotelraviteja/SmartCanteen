@@ -1,0 +1,16 @@
+{
+  "name": "smartcanteen-selenium-tests",
+  "version": "1.0.0",
+  "description": "SmartCanteen E2E Web Tests using Selenium Webdriver",
+  "main": "test-suite.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "mocha test-suite.js"
+  },
+  "dependencies": {
+    "chromedriver": "^149.0.3",
+    "exceljs": "^4.4.0",
+    "mocha": "^11.7.6",
+    "selenium-webdriver": "^4.45.0"
+  }
+}

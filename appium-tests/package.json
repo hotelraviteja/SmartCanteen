@@ -1,0 +1,15 @@
+{
+  "name": "smartcanteen-appium-tests",
+  "version": "1.0.0",
+  "description": "SmartCanteen E2E Android Mobile Tests using Appium & WebdriverIO",
+  "main": "run-appium.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node run-appium.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "mocha": "^11.7.6",
+    "webdriverio": "^8.40.6"
+  }
+}
