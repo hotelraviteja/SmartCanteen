@@ -31,6 +31,114 @@ if (isValidConfig) {
 }
 
 if (isMock) {
+  // In-memory mock database for frontend testing and CI/CD pipelines
+  const mockCanteens = [
+    {
+      id: "e33f4f26-c16a-4020-a74f-f4e013ef1f28",
+      name: "H1 Owner Canteen",
+      owner_id: "mock-owner-id-123",
+      status: "approved",
+      cuisine_type: "Indian",
+      rating: 4.8
+    }
+  ];
+
+  const mockMenuItems = [
+    {
+      id: "mock-menu-item-1",
+      canteen_id: "e33f4f26-c16a-4020-a74f-f4e013ef1f28",
+      name: "Veg Burger",
+      price: 80,
+      is_active: true,
+      category: "Snacks",
+      is_veg: true,
+      image_url: null,
+      description: "Crispy veg patty burger"
+    },
+    {
+      id: "mock-menu-item-2",
+      canteen_id: "e33f4f26-c16a-4020-a74f-f4e013ef1f28",
+      name: "Masala Dosa",
+      price: 60,
+      is_active: true,
+      category: "South Indian",
+      is_veg: true,
+      image_url: null,
+      description: "South Indian crepe served with chutney and sambar"
+    }
+  ];
+
+  const mockOrders = [];
+
+  const mockProfiles = [
+    {
+      id: "mock-supabase-uuid-1234",
+      full_name: "JOHN DOE",
+      student_id: "CS-2026-928",
+      department: "Computer Science & Engineering",
+      academic_year: "3rd Year",
+      phone: "+91 98765 43210",
+      role: "student"
+    }
+  ];
+
+  const makeMockQueryBuilder = (table) => {
+    console.log("[Supabase Mock] from table:", table);
+    let mockData = [];
+    if (table === "canteens") mockData = mockCanteens;
+    if (table === "menu_items") mockData = mockMenuItems;
+    if (table === "orders") mockData = mockOrders;
+    if (table === "profiles") mockData = mockProfiles;
+
+    const chainObj = {
+      select: () => chainObj,
+      eq: (col, val) => {
+        if (col === "id" || col === "student_id") {
+          mockData = mockData.filter(item => item.id === val || item.student_id === val);
+        }
+        if (col === "canteen_id") {
+          mockData = mockData.filter(item => item.canteen_id === val);
+        }
+        return chainObj;
+      },
+      neq: (col, val) => {
+        if (col === "status") {
+          mockData = mockData.filter(item => item.status !== val);
+        }
+        return chainObj;
+      },
+      order: () => chainObj,
+      single: async () => ({ data: mockData[0] || null, error: null }),
+      maybeSingle: async () => ({ data: mockData[0] || null, error: null }),
+      insert: (newData) => {
+        const items = Array.isArray(newData) ? newData : [newData];
+        items.forEach(item => {
+          const inserted = {
+            id: item.id || "mock-order-id-" + Math.floor(Math.random() * 1000000),
+            created_at: new Date().toISOString(),
+            ...item
+          };
+          mockOrders.push(inserted);
+        });
+        mockData = items;
+        return chainObj;
+      },
+      update: (updateData) => {
+        mockData.forEach(item => {
+          Object.assign(item, updateData);
+        });
+        return chainObj;
+      },
+      delete: async () => {
+        return { data: null, error: null };
+      },
+      then: (resolve) => {
+        resolve({ data: mockData, error: null });
+      }
+    };
+    return chainObj;
+  };
+
   // Mock interface mimicking the Supabase Auth APIs for UI development
   supabaseInstance = {
     auth: {
@@ -56,6 +164,7 @@ if (isMock) {
       },
       
       signInWithPassword: async ({ email, password }) => {
+        console.log("[Supabase Mock] signInWithPassword called for email:", email);
         // Simulate minor delay
         await new Promise((resolve) => setTimeout(resolve, 800));
         
@@ -83,12 +192,13 @@ if (isMock) {
       },
       
       signUp: async ({ email, password, options }) => {
+        console.log("[Supabase Mock] signUp called for email:", email);
         await new Promise((resolve) => setTimeout(resolve, 800));
         
         const user = {
           id: "mock-supabase-uuid-5678",
           email: email,
-          user_metadata: options?.options?.data || {
+          user_metadata: options?.data || options?.options?.data || {
             full_name: email.split("@")[0].replace(".", " ").toUpperCase()
           }
         };
@@ -153,6 +263,15 @@ if (isMock) {
         return { data: { user: { email: "student@college.edu" } }, error: null };
       }
     },
+    from: (table) => makeMockQueryBuilder(table),
+    channel: (name) => {
+      const channelObj = {
+        on: () => channelObj,
+        subscribe: () => channelObj,
+      };
+      return channelObj;
+    },
+    removeChannel: () => {},
     isMock: true
   };
 }

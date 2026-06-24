@@ -57,12 +57,15 @@ export const Register = () => {
         canteenName: role === "owner" ? data.canteenName : ""
       });
 
+      console.log("[Register] onSubmit successful, calling setIsSuccess(true)");
       setIsSuccess(true);
       
       setTimeout(() => {
+        console.log("[Register] Redirecting to login page now");
         navigate("/auth/login");
-      }, 3000);
+      }, 6000);
     } catch (error) {
+      console.error("[Register] onSubmit failed with error:", error);
       setToast({
         type: "error",
         message: error.message || "Failed to create account. Please check your inputs.",
@@ -73,6 +76,7 @@ export const Register = () => {
   };
 
   if (isSuccess) {
+    console.log("[Register] Rendering success page");
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-canvas-light dark:bg-canvas-dark px-4">
         <motion.div

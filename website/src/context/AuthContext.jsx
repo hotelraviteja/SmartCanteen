@@ -128,7 +128,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password, rememberMe = false) => {
-    setLoading(true);
     try {
       // If already locked, block
       if (isLocked) {
@@ -165,18 +164,15 @@ export const AuthProvider = ({ children }) => {
         }
       }
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const register = async (userData) => {
-    setLoading(true);
     try {
       const data = await authService.register(userData);
       return data;
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -195,27 +191,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const loginWithGoogle = async () => {
-    setLoading(true);
     try {
       const data = await authService.loginWithGoogle();
       return data;
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      throw error;
     }
   };
 
   const verifyOTP = async (email, otp) => {
-    setLoading(true);
     try {
       const data = await authService.verifyOTP(email, otp);
       return data;
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      throw error;
     }
   };
 
   const resetPassword = async (email, newPassword) => {
-    setLoading(true);
     try {
       const data = await authService.resetPassword(email, newPassword);
       // If resetting a locked account, unlock it
@@ -223,8 +216,8 @@ export const AuthProvider = ({ children }) => {
         unlockAccount();
       }
       return data;
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      throw error;
     }
   };
 

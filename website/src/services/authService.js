@@ -2,7 +2,8 @@ import { supabase } from "./supabaseClient";
 
 export const authService = {
   login: async (email, password) => {
-    // E2E Test Suite Bypass for rate-limiting protection
+    // E2E Test Suite Bypass for rate-limiting protection commented out
+    /*
     if (email.startsWith("john.doe")) {
       return {
         user: {
@@ -18,6 +19,7 @@ export const authService = {
         token: "mock-jwt-token-xyz-123"
       };
     }
+    */
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -63,7 +65,8 @@ export const authService = {
   },
 
   register: async (userData) => {
-    // E2E Test Suite Bypass for rate-limiting protection
+    // E2E Test Suite Bypass for rate-limiting protection commented out
+    /*
     if (userData.email.startsWith("john.doe")) {
       return {
         success: true,
@@ -81,6 +84,7 @@ export const authService = {
         }
       };
     }
+    */
 
     const { data, error } = await supabase.auth.signUp({
       email: userData.email,
