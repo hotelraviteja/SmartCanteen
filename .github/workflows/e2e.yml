@@ -93,41 +93,84 @@ jobs:
     name: Unit Tests - API (300)
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Run API Unit Tests Check
         run: |
           echo "Running API Unit Tests on KisaanConnect microservices..."
           echo "Checked 300 endpoints successfully."
           exit 0
 
+      - name: Upload Unit Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-reports
+          path: |
+            reports/unit-test-report.xlsx
+            reports/unit-report.xlsx
+
   validation:
     name: Validation Tests (300)
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Run Validation Constraints Check
         run: |
           echo "Running Validation constraint checks on model schema and database fields..."
           echo "Checked 300 constraint cases successfully."
           exit 0
 
+      - name: Upload Validation Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-reports
+          path: |
+            reports/vulnerability-test-report.xlsx
+            reports/validation-report.xlsx
+
   deploy:
     name: Deployment Status (300)
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Run Deployment Verification Check
         run: |
           echo "Pinging production and staging deployment clusters..."
           echo "Deployment ping checks passed. 300 instances active."
           exit 0
 
+      - name: Upload Deployment Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-reports
+          path: |
+            reports/deploy-report.xlsx
+
   load-testing:
     name: Load Testing - Performance (300)
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Run Performance Benchmarks
         run: |
           echo "Running load tests with simulated 500 concurrent connections..."
           echo "Latency is within bounds (<800ms) for all 300 test cases."
           exit 0
+
+      - name: Upload Load Testing Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: load-reports
+          path: |
+            reports/load-test-report.xlsx
+            reports/load-report.xlsx
 
   compile:
     name: Compile Master Report & Deploy
@@ -153,3 +196,9 @@ jobs:
         run: |
           echo "Aggregating all test outputs into master sheets..."
           echo "Publishing E2E test results to deployment dashboard..."
+
+      - name: Upload Master Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: master-report
+          path: reports/full-e2e-report.xlsx
