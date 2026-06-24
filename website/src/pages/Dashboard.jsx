@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { Toast } from "../components/Toast";
-import { CANTEEN_CATALOGUE, FOOD_CATEGORIES, MOCK_TRANSACTIONS, MOCK_NOTIFICATIONS } from "../utils/constants";
+import { supabase } from "../services/supabaseClient";
+import { FOOD_CATEGORIES, MOCK_TRANSACTIONS, MOCK_NOTIFICATIONS } from "../utils/constants";
+import { Loader2 } from "lucide-react";
 import { 
   LogOut, User, Wallet, QrCode, Ticket, ArrowRight, 
   Terminal, ShieldX, Hourglass, ServerOff, Plus, Minus, ShoppingBag, 
@@ -22,11 +24,47 @@ export const Dashboard = () => {
   // Toast Alerts State
   const [toast, setToast] = useState(null);
 
-  // Canteen Wallet Balance State
-  const [balance, setBalance] = useState(450);
+  // Dynamic canteens and items from database
+  const [canteens, setCanteens] = useState([]);
+  const [selectedCanteen, setSelectedCanteen] = useState(null);
+  const [menuItems, setMenuItems] = useState([]);
+  
+  // Loading states
+  const [loadingCanteens, setLoadingCanteens] = useState(true);
+  const [loadingMenu, setLoadingMenu] = useState(false);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
-  // Transactions History State (Persisting checkout records in ledger)
-  const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
+  // Persistent user balance in localStorage
+  const [balance, setBalance] = useState(() => {
+    if (!user) return 450;
+    const key = `campusbite_balance_${user.id}`;
+    const stored = localStorage.getItem(key);
+    return stored ? parseFloat(stored) : 450;
+  });
+
+  // Sync balance to localStorage
+  useEffect(() => {
+    if (user) {
+      const key = `campusbite_balance_${user.id}`;
+      localStorage.setItem(key, balance.toString());
+    }
+  }, [balance, user]);
+
+  // Persistent transactions list
+  const [transactions, setTransactions] = useState(() => {
+    if (!user) return MOCK_TRANSACTIONS;
+    const key = `campusbite_transactions_${user.id}`;
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : MOCK_TRANSACTIONS;
+  });
+
+  useEffect(() => {
+    if (user) {
+      const key = `campusbite_transactions_${user.id}`;
+      localStorage.setItem(key, JSON.stringify(transactions));
+    }
+  }, [transactions, user]);
+
   const [isLedgerOpen, setIsLedgerOpen] = useState(false);
 
   // Notifications State
@@ -42,9 +80,7 @@ export const Dashboard = () => {
   const [cart, setCart] = useState({});
 
   // Active digital tokens list
-  const [tokens, setTokens] = useState([
-    { id: "CB-9284", item: "Paneer Butter Masala Combo", count: 1, counter: "Counter 2", status: "Ready", code: "Biryani-1", price: 120 }
-  ]);
+  const [tokens, setTokens] = useState([]);
 
   // Selected Token for Receipt Modal Stepper Detail view
   const [selectedToken, setSelectedToken] = useState(null);
@@ -52,12 +88,141 @@ export const Dashboard = () => {
   // Offline Outage Simulator State
   const [offlineMode, setOfflineMode] = useState(false);
 
+  // Fetch approved canteens from database
+  useEffect(() => {
+    const fetchCanteens = async () => {
+      setLoadingCanteens(true);
+      try {
+        const { data, error } = await supabase
+          .from("canteens")
+          .select("*")
+          .eq("status", "approved");
+        
+        if (error) throw error;
+        setCanteens(data || []);
+        if (data && data.length > 0) {
+          setSelectedCanteen(data[0]);
+        }
+      } catch (err) {
+        console.error("Error fetching canteens:", err);
+        setToast({ type: "error", message: "Failed to load approved canteens." });
+      } finally {
+        setLoadingCanteens(false);
+      }
+    };
+
+    if (user) {
+      fetchCanteens();
+    }
+  }, [user]);
+
+  // Fetch menu items when selected canteen changes
+  useEffect(() => {
+    const fetchMenu = async () => {
+      if (!selectedCanteen) {
+        setMenuItems([]);
+        return;
+      }
+      setLoadingMenu(true);
+      try {
+        const { data, error } = await supabase
+          .from("menu_items")
+          .select("*")
+          .eq("canteen_id", selectedCanteen.id);
+        
+        if (error) throw error;
+        setMenuItems(data || []);
+      } catch (err) {
+        console.error("Error fetching menu items:", err);
+        setToast({ type: "error", message: "Failed to load menu items." });
+      } finally {
+        setLoadingMenu(false);
+      }
+    };
+
+    fetchMenu();
+    setCart({}); // Reset cart when canteen changes
+  }, [selectedCanteen]);
+
+  // Fetch orders from database
+  const fetchStudentOrders = async () => {
+    if (!user) return;
+    setLoadingOrders(true);
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("student_id", user.id)
+        .neq("status", "collected")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const mappedTokens = (data || []).map(order => {
+        const itemsList = order.items || [];
+        const itemSummary = itemsList.map(i => `${i.quantity}x ${i.name}`).join(", ");
+        const totalCount = itemsList.reduce((acc, curr) => acc + (curr.quantity || 0), 0);
+        
+        let statusLabel = "Preparing";
+        if (order.status === "ready") statusLabel = "Ready";
+        if (order.status === "collected") statusLabel = "Collected";
+
+        const hasJuice = itemsList.some(i => i.category && i.category.toLowerCase().includes("juice"));
+        const counterLabel = hasJuice ? "Counter 3 (Juice Hub)" : "Counter 1 (Main Canteen)";
+
+        return {
+          id: order.id,
+          item: itemSummary || "Canteen Food Order",
+          count: totalCount,
+          counter: counterLabel,
+          status: statusLabel,
+          price: order.total_amount,
+          items: itemsList
+        };
+      });
+
+      setTokens(mappedTokens);
+    } catch (err) {
+      console.error("Error fetching student orders:", err);
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
+  // Setup active student orders listener and realtime sync
+  useEffect(() => {
+    if (!user) return;
+
+    fetchStudentOrders();
+
+    const ordersChannel = supabase
+      .channel(`student-orders-${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "orders",
+          filter: `student_id=eq.${user.id}`,
+        },
+        (payload) => {
+          console.log("Realtime order update event:", payload);
+          fetchStudentOrders();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ordersChannel);
+    };
+  }, [user]);
+
   // Filter catalogue list based on Category, Veg-Only toggle, and Search queries
-  const filteredItems = CANTEEN_CATALOGUE.filter(item => {
+  const filteredItems = menuItems.filter(item => {
     const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-    const matchesVeg = !isVegOnly || item.isVeg;
+    const matchesVeg = !isVegOnly || item.is_veg;
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+                          (item.desc_text || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesVeg && matchesSearch;
   });
 
@@ -90,7 +255,7 @@ export const Dashboard = () => {
     let itemCount = 0;
 
     Object.entries(cart).forEach(([itemId, qty]) => {
-      const item = CANTEEN_CATALOGUE.find(food => food.id === itemId);
+      const item = menuItems.find(food => food.id === itemId);
       if (item) {
         subtotal += item.price * qty;
         itemCount += qty;
@@ -154,22 +319,35 @@ export const Dashboard = () => {
     setToast({ type: "success", message: "₹100 credited to your Canteen Wallet!" });
   };
 
-  // Claim order token
-  const handleClaimToken = (tokenID, e) => {
+  // Claim order token in DB
+  const handleClaimToken = async (tokenID, e) => {
     e?.stopPropagation(); // Prevent opening modal
     if (offlineMode) {
       setToast({ type: "error", message: "Action failed. Canteen sync server is offline." });
       return;
     }
-    setTokens(prev => prev.filter(t => t.id !== tokenID));
-    if (selectedToken?.id === tokenID) {
-      setSelectedToken(null);
+    
+    try {
+      const { error } = await supabase
+        .from("orders")
+        .update({ status: "collected" })
+        .eq("id", tokenID);
+
+      if (error) throw error;
+
+      setToast({ type: "success", message: `Token ${tokenID} claimed and order picked up!` });
+      fetchStudentOrders();
+      if (selectedToken?.id === tokenID) {
+        setSelectedToken(null);
+      }
+    } catch (err) {
+      console.error("Error claiming token:", err);
+      setToast({ type: "error", message: "Failed to claim order token." });
     }
-    setToast({ type: "success", message: `Token ${tokenID} claimed and order picked up!` });
   };
 
-  // Checkout and checkout payments
-  const handleCheckout = () => {
+  // Checkout and checkout payments inserting into Supabase orders table
+  const handleCheckout = async () => {
     if (offlineMode) {
       setToast({ type: "error", message: "Payment failed. Bank server offline." });
       return;
@@ -185,53 +363,73 @@ export const Dashboard = () => {
       return;
     }
 
-    setBalance(prev => prev - grandTotal);
+    if (!selectedCanteen) {
+      setToast({ type: "error", message: "Please select a canteen first." });
+      return;
+    }
 
-    // Create canteen tokens and transaction debits
-    const newTokens = [];
-    const newTxns = [];
+    try {
+      const orderId = "CB-" + Math.floor(10000 + Math.random() * 90000);
 
-    Object.entries(cart).forEach(([itemId, qty]) => {
-      const item = CANTEEN_CATALOGUE.find(food => food.id === itemId);
-      const tokenID = "CB-" + Math.floor(10000 + Math.random() * 90000);
-      
-      newTokens.push({
-        id: tokenID,
-        item: item.name,
-        count: qty,
-        counter: item.category === "Beverages & Juices" ? "Counter 3 (Juice Hub)" : "Counter 1 (Main Canteen)",
-        status: "Preparing",
-        price: item.price
+      const orderItems = Object.entries(cart).map(([itemId, qty]) => {
+        const item = menuItems.find(food => food.id === itemId);
+        return {
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: qty,
+          category: item.category
+        };
       });
 
-      newTxns.push({
+      const { error } = await supabase
+        .from("orders")
+        .insert({
+          id: orderId,
+          student_id: user.id,
+          canteen_id: selectedCanteen.id,
+          status: "preparing",
+          total_amount: grandTotal,
+          items: orderItems
+        });
+
+      if (error) throw error;
+
+      setBalance(prev => prev - grandTotal);
+
+      // Create transaction debits
+      const newTxns = orderItems.map(item => ({
         id: "TXN-" + Math.floor(10000 + Math.random() * 90000),
         type: "debit",
-        amount: item.price * qty,
+        amount: item.price * item.quantity,
         title: item.name,
         date: "Just now",
         status: "Success"
+      }));
+
+      setTransactions(prev => [...newTxns, ...prev]);
+      setCart({});
+      
+      // Add alert notification
+      const newNotif = {
+        id: "notif-" + Math.floor(Math.random() * 1000),
+        title: "Tokens Generated",
+        body: `Successfully generated active canteen pick-up token ${orderId}.`,
+        time: "1s ago",
+        unread: true
+      };
+      setNotifications(prev => [newNotif, ...prev]);
+
+      setToast({
+        type: "success",
+        message: "Order placed! Digital pick-up pass generated.",
       });
-    });
 
-    setTokens(prev => [...newTokens, ...prev]);
-    setTransactions(prev => [...newTxns, ...prev]);
-    setCart({});
-    
-    // Add alert notification
-    const newNotif = {
-      id: "notif-" + Math.floor(Math.random() * 1000),
-      title: "Tokens Generated",
-      body: `Successfully generated ${newTokens.length} active canteen pick-up tokens.`,
-      time: "1s ago",
-      unread: true
-    };
-    setNotifications(prev => [newNotif, ...prev]);
-
-    setToast({
-      type: "success",
-      message: "Order placed! Digital pick-up passes generated.",
-    });
+      fetchStudentOrders();
+    } catch (err) {
+      console.error("Checkout database error:", err);
+      setToast({ type: "error", message: err.message || "Failed to place order." });
+    }
   };
 
   // Mark all notifications as read
@@ -417,6 +615,45 @@ export const Dashboard = () => {
             </div>
           </div>
 
+          {/* Canteen Selector */}
+          <div className="space-y-3 text-left">
+            <h3 className="font-heading text-xs font-extrabold tracking-widest uppercase text-neutral-450 dark:text-neutral-500 px-1">
+              Select Canteen
+            </h3>
+            {loadingCanteens ? (
+              <div className="flex items-center gap-2.5 p-4 glass-panel justify-center border-neutral-200 dark:border-border-dark">
+                <Loader2 className="h-4.5 w-4.5 animate-spin text-brand" />
+                <span className="text-xs font-bold text-neutral-500">Loading approved canteens...</span>
+              </div>
+            ) : canteens.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                {canteens.map((canteen) => (
+                  <button
+                    key={canteen.id}
+                    onClick={() => setSelectedCanteen(canteen)}
+                    className={`glass-panel p-4 text-left border transition-all duration-200 cursor-pointer ${
+                      selectedCanteen?.id === canteen.id
+                        ? "border-brand bg-brand/5 dark:bg-brand/10 shadow-sm"
+                        : "border-neutral-250 hover:border-brand/40 dark:border-border-dark dark:hover:border-brand/20"
+                    }`}
+                  >
+                    <span className="text-xl">🏪</span>
+                    <h4 className="text-xs font-extrabold text-neutral-800 dark:text-neutral-200 mt-2 truncate">
+                      {canteen.name}
+                    </h4>
+                    <p className="text-[10px] text-neutral-400 font-semibold mt-0.5">
+                      Status: Approved
+                    </p>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="glass-panel p-6 text-center text-xs font-bold text-neutral-500 border-neutral-200 dark:border-border-dark">
+                No approved canteens found. Administrators must approve canteen registration requests.
+              </div>
+            )}
+          </div>
+
           {/* Active Tokens list */}
           {tokens.length > 0 && (
             <div className="space-y-3">
@@ -545,7 +782,12 @@ export const Dashboard = () => {
 
             {/* Catalogue Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filteredItems.length > 0 ? (
+              {loadingMenu ? (
+                <div className="col-span-2 glass-panel p-8 rounded-3xl text-center flex flex-col items-center justify-center space-y-3">
+                  <Loader2 className="h-8 w-8 animate-spin text-brand" />
+                  <h4 className="font-heading text-sm font-bold text-neutral-700 dark:text-neutral-300">Loading menu items...</h4>
+                </div>
+              ) : filteredItems.length > 0 ? (
                 filteredItems.map((item) => {
                   const cartQty = cart[item.id] || 0;
 
@@ -566,23 +808,23 @@ export const Dashboard = () => {
                           <div className="flex items-center justify-between">
                             {/* Swiggy veg/nonveg square border badge */}
                             <div className={`h-4.5 w-4.5 border-2 rounded flex items-center justify-center flex-shrink-0 ${
-                              item.isVeg 
+                              item.is_veg 
                                 ? "border-emerald-500 text-emerald-500" 
                                 : "border-rose-500 text-rose-500"
                             }`}>
-                              <span className={`h-2 w-2 rounded-full ${item.isVeg ? "bg-emerald-500" : "bg-rose-500"}`} />
+                              <span className={`h-2 w-2 rounded-full ${item.is_veg ? "bg-emerald-500" : "bg-rose-500"}`} />
                             </div>
 
                             <div className="flex items-center gap-1.5 text-[10px] text-neutral-450 font-bold bg-neutral-100/55 dark:bg-panel-dark/80 px-2 py-0.5 rounded-md border border-neutral-150/40 dark:border-border-dark">
                               <Clock className="h-3.5 w-3.5" />
-                              <span>{item.prepTime}</span>
+                              <span>{item.prep_time}</span>
                             </div>
                           </div>
 
                           <div className="space-y-0.5">
                             <h4 className="text-sm font-extrabold tracking-tight">{item.name}</h4>
-                            <p className="text-[11px] text-neutral-450 dark:text-neutral-500 leading-normal line-clamp-2">
-                              {item.desc}
+                            <p className="text-[11px] text-neutral-455 dark:text-neutral-500 leading-normal line-clamp-2">
+                              {item.desc_text}
                             </p>
                           </div>
                         </div>
@@ -631,7 +873,6 @@ export const Dashboard = () => {
               )}
             </div>
           </div>
-
         </div>
 
         {/* Right Side: Swiggy Cart Panel & Outage Controller (4 columns) */}
@@ -661,16 +902,16 @@ export const Dashboard = () => {
             <div className="space-y-4 max-h-[220px] overflow-y-auto pr-1">
               {itemCount > 0 ? (
                 Object.entries(cart).map(([itemId, qty]) => {
-                  const item = CANTEEN_CATALOGUE.find(food => food.id === itemId);
+                  const item = menuItems.find(food => food.id === itemId);
                   if (!item) return null;
                   
                   return (
                     <div key={itemId} className="flex justify-between items-center text-xs">
                       <div className="flex items-center gap-2.5 max-w-[60%]">
                         <div className={`h-3.5 w-3.5 border rounded flex-shrink-0 flex items-center justify-center ${
-                          item.isVeg ? "border-emerald-500" : "border-rose-500"
+                          item.is_veg ? "border-emerald-500" : "border-rose-500"
                         }`}>
-                          <span className={`h-1.5 w-1.5 rounded-full ${item.isVeg ? "bg-emerald-500" : "bg-rose-500"}`} />
+                          <span className={`h-1.5 w-1.5 rounded-full ${item.is_veg ? "bg-emerald-500" : "bg-rose-500"}`} />
                         </div>
                         <span className="font-bold text-neutral-800 dark:text-neutral-200 truncate">{item.name}</span>
                       </div>
@@ -678,11 +919,11 @@ export const Dashboard = () => {
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1.5 border border-brand/20 bg-brand/5 dark:bg-brand/10 text-brand text-[10px] font-extrabold rounded-lg px-1.5 py-0.5">
                           <button onClick={() => handleRemoveOneFromCart(itemId)} className="cursor-pointer">
-                            <Minus className="h-3 w-3 stroke-[3]" />
+                            <Minus className="h-3.5 w-3.5 stroke-[3]" />
                           </button>
                           <span>{qty}</span>
                           <button onClick={() => handleAddToCart(itemId)} className="cursor-pointer">
-                            <Plus className="h-3 w-3 stroke-[3]" />
+                            <Plus className="h-3.5 w-3.5 stroke-[3]" />
                           </button>
                         </div>
                         <span className="font-extrabold text-neutral-800 dark:text-neutral-100 min-w-[45px] text-right">

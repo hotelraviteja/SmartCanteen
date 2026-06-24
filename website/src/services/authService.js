@@ -26,15 +26,35 @@ export const authService = {
       throw new Error(error.message);
     }
     
+    // Fetch user profile from database to get true role and details
+    let role = "student";
+    let dbProfile = null;
+    try {
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", data.user.id)
+        .maybeSingle();
+      if (profileData) {
+        dbProfile = profileData;
+        role = profileData.role || "student";
+      }
+    } catch (err) {
+      console.error("Error fetching database profile: ", err);
+    }
+
     // Map Supabase user profile metadata to the application format
     return {
       user: {
-        name: data.user.user_metadata?.full_name || email.split("@")[0].replace(".", " ").toUpperCase(),
+        id: data.user.id,
+        name: dbProfile?.full_name || data.user.user_metadata?.full_name || email.split("@")[0].replace(".", " ").toUpperCase(),
         email: data.user.email,
-        studentId: data.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
-        department: data.user.user_metadata?.department || "Computer Science & Engineering",
-        academicYear: data.user.user_metadata?.academic_year || "3rd Year",
-        phone: data.user.phone || data.user.user_metadata?.phone || "+91 98765 43210"
+        studentId: dbProfile?.student_id || data.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
+        department: dbProfile?.department || data.user.user_metadata?.department || "Computer Science & Engineering",
+        academicYear: dbProfile?.academic_year || data.user.user_metadata?.academic_year || "3rd Year",
+        phone: data.user.phone || dbProfile?.phone || data.user.user_metadata?.phone || "+91 98765 43210",
+        role: role,
+        canteenName: dbProfile?.canteen_name || ""
       },
       token: data.session?.access_token || "mock-jwt-token-xyz-123"
     };
@@ -45,7 +65,7 @@ export const authService = {
     if (userData.email.startsWith("john.doe")) {
       return {
         success: true,
-        message: "Registration successful! Please check your email for the verification link.",
+        message: "Registration successful! You can now log in.",
         user: {
           id: "mock-student-id-123",
           email: userData.email,
@@ -67,10 +87,12 @@ export const authService = {
         emailRedirectTo: window.location.origin + "/auth/login",
         data: {
           full_name: userData.fullName || userData.name,
-          student_id: userData.studentId || "CB-" + Math.floor(100000 + Math.random() * 900000),
-          department: userData.department || "Computer Science & Engineering",
-          academic_year: userData.academicYear || "3rd Year",
-          phone: userData.phone || "+91 98765 43210"
+          student_id: userData.role === "owner" ? "" : (userData.studentId || "CB-" + Math.floor(100000 + Math.random() * 900000)),
+          department: userData.role === "owner" ? "" : (userData.department || "Computer Science & Engineering"),
+          academic_year: userData.role === "owner" ? "" : (userData.academicYear || "3rd Year"),
+          phone: userData.mobile || userData.phone || "+91 98765 43210",
+          role: userData.role || "student",
+          canteen_name: userData.canteenName || ""
         }
       }
     });
@@ -81,7 +103,7 @@ export const authService = {
 
     return {
       success: true,
-      message: "Registration successful! Please check your email for the verification link.",
+      message: "Registration successful! You can now log in.",
       user: data.user
     };
   },

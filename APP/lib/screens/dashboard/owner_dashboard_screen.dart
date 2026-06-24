@@ -300,14 +300,74 @@ class _OwnerDashboardScreenState extends State<OwnerDashboardScreen> with Single
           ],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          // Tab 1: Orders Queue
-          _buildOrdersQueueTab(provider, isDark),
+          if (provider.selectedCanteen?.status == 'pending')
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: const Color(0xFFD97706),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded, color: Colors.white, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Approval Pending",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, fontFamily: 'Poppins'),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "Your canteen is not visible to students yet. An administrator will verify and approve it shortly.",
+                          style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (provider.selectedCanteen?.status == 'rejected')
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              color: const Color(0xFFDC2626),
+              child: Row(
+                children: [
+                  const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Verification Rejected",
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13, fontFamily: 'Poppins'),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "Your canteen request has been rejected. Please contact support or update your canteen details.",
+                          style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                // Tab 1: Orders Queue
+                _buildOrdersQueueTab(provider, isDark),
 
-          // Tab 2: Menu Catalog Manager
-          _buildMenuManagerTab(provider, isDark),
+                // Tab 2: Menu Catalog Manager
+                _buildMenuManagerTab(provider, isDark),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

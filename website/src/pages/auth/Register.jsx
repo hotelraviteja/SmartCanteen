@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { AuthLayout } from "../../components/AuthLayout";
 import { PasswordStrength } from "../../components/PasswordStrength";
@@ -13,6 +13,8 @@ import { motion, AnimatePresence } from "framer-motion";
 export const Register = () => {
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [role, setRole] = useState(location.state?.role || "student");
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -26,6 +28,7 @@ export const Register = () => {
     defaultValues: {
       fullName: "",
       studentId: "",
+      canteenName: "",
       department: DEPARTMENTS[0],
       academicYear: ACADEMIC_YEARS[0],
       email: "",
@@ -44,12 +47,14 @@ export const Register = () => {
     try {
       await registerUser({
         fullName: data.fullName,
-        studentId: data.studentId,
-        department: data.department,
-        academicYear: data.academicYear,
+        studentId: role === "student" ? data.studentId : "",
+        department: role === "student" ? data.department : "",
+        academicYear: role === "student" ? data.academicYear : "",
         email: data.email,
         mobile: data.mobile,
         password: data.password,
+        role: role,
+        canteenName: role === "owner" ? data.canteenName : ""
       });
 
       setIsSuccess(true);
@@ -83,7 +88,7 @@ export const Register = () => {
             Registration Complete!
           </h2>
           <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6 leading-relaxed">
-            Your CampusBite student account has been created. A verification link has been sent to your college inbox.
+            Your CampusBite {role === "owner" ? "canteen owner" : "student"} account has been created. A verification link has been sent to your college inbox.
           </p>
           <div className="space-y-3">
             <div className="text-[10px] text-neutral-400 font-bold uppercase tracking-widest">
@@ -105,8 +110,8 @@ export const Register = () => {
 
   return (
     <AuthLayout
-      title="Create Student Account"
-      subtitle="Register now to grab digital tokens, check live menu items, and bypass canteen queues."
+      title={role === "owner" ? "Canteen Partner Registration" : "Create Student Account"}
+      subtitle={role === "owner" ? "Register your canteen to manage menu items, receive digital orders, and accept tokens." : "Register now to grab digital tokens, check live menu items, and bypass canteen queues."}
     >
       <AnimatePresence>
         {toast && (
@@ -118,12 +123,33 @@ export const Register = () => {
         )}
       </AnimatePresence>
 
+      {/* Role Tabs Switcher */}
+      <div className="flex bg-neutral-100 dark:bg-neutral-900/50 p-1.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-800 mb-5 shadow-inner">
+        {[
+          { id: "student", label: "Student" },
+          { id: "owner", label: "Canteen Owner" }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setRole(tab.id)}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 cursor-pointer ${
+              role === tab.id
+                ? "bg-brand text-white shadow-md shadow-brand/10 scale-105"
+                : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-450 dark:hover:text-neutral-300"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
         
-        {/* Full Name & Student ID */}
+        {/* Full Name & Student ID / Canteen Name */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-neutral-450 dark:text-neutral-500 uppercase tracking-widest">
+            <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
               Full Name
             </label>
             <div className="relative">
@@ -140,58 +166,82 @@ export const Register = () => {
             {errors.fullName && <p className="text-error text-xs font-semibold mt-1">{errors.fullName.message}</p>}
           </div>
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-neutral-450 dark:text-neutral-500 uppercase tracking-widest">
-              Student ID / Roll No.
-            </label>
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400 pointer-events-none">
-                <IdCard className="h-4 w-4" />
-              </span>
-              <input
-                type="text"
-                placeholder="CS-2023-92"
-                {...register("studentId", { 
-                  required: "Student ID is required",
-                  pattern: { value: STUDENT_ID_REGEX, message: "Invalid format" }
-                })}
-                className={`premium-input ${errors.studentId ? "border-error focus:ring-error/15" : ""}`}
-              />
+          {role === "student" ? (
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
+                Student ID / Roll No.
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400 pointer-events-none">
+                  <IdCard className="h-4 w-4" />
+                </span>
+                <input
+                  type="text"
+                  placeholder="CS-2023-92"
+                  {...register("studentId", { 
+                    required: "Student ID is required",
+                    pattern: { value: STUDENT_ID_REGEX, message: "Invalid format" }
+                  })}
+                  className={`premium-input ${errors.studentId ? "border-error focus:ring-error/15" : ""}`}
+                />
+              </div>
+              {errors.studentId && <p className="text-error text-xs font-semibold mt-1">{errors.studentId.message}</p>}
             </div>
-            {errors.studentId && <p className="text-error text-xs font-semibold mt-1">{errors.studentId.message}</p>}
-          </div>
+          ) : (
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
+                Canteen Name
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400 pointer-events-none">
+                  <User className="h-4 w-4" />
+                </span>
+                <input
+                  type="text"
+                  placeholder="e.g. Central Canteen"
+                  {...register("canteenName", { 
+                    required: "Canteen Name is required"
+                  })}
+                  className={`premium-input ${errors.canteenName ? "border-error focus:ring-error/15" : ""}`}
+                />
+              </div>
+              {errors.canteenName && <p className="text-error text-xs font-semibold mt-1">{errors.canteenName.message}</p>}
+            </div>
+          )}
         </div>
 
         {/* Department & Academic Year */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
-              Department
-            </label>
-            <select
-              {...register("department", { required: "Department is required" })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-panel-dark/50 text-neutral-800 dark:text-neutral-100 transition-all text-xs font-semibold outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 cursor-pointer"
-            >
-              {DEPARTMENTS.map((dept) => (
-                <option key={dept} value={dept} className="dark:bg-[#0F1116]">{dept}</option>
-              ))}
-            </select>
-          </div>
+        {role === "student" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
+                Department
+              </label>
+              <select
+                {...register("department", { required: "Department is required" })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-panel-dark/50 text-neutral-800 dark:text-neutral-100 transition-all text-xs font-semibold outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 cursor-pointer"
+              >
+                {DEPARTMENTS.map((dept) => (
+                  <option key={dept} value={dept} className="dark:bg-[#0F1116]">{dept}</option>
+                ))}
+              </select>
+            </div>
 
-          <div className="space-y-1">
-            <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
-              Academic Year
-            </label>
-            <select
-              {...register("academicYear", { required: "Year is required" })}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-panel-dark/50 text-neutral-800 dark:text-neutral-100 transition-all text-xs font-semibold outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 cursor-pointer"
-            >
-              {ACADEMIC_YEARS.map((year) => (
-                <option key={year} value={year} className="dark:bg-[#0F1116]">{year}</option>
-              ))}
-            </select>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-neutral-455 dark:text-neutral-500 uppercase tracking-widest">
+                Academic Year
+              </label>
+              <select
+                {...register("academicYear", { required: "Year is required" })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-panel-dark/50 text-neutral-800 dark:text-neutral-100 transition-all text-xs font-semibold outline-none focus:border-brand focus:ring-2 focus:ring-brand/15 cursor-pointer"
+              >
+                {ACADEMIC_YEARS.map((year) => (
+                  <option key={year} value={year} className="dark:bg-[#0F1116]">{year}</option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Email & Mobile Number */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

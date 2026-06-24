@@ -23,6 +23,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword2 = true;
   bool _acceptTerms = false;
   bool _isOwner = false;
+  bool _initializedFromArgs = false;
   String? _errorMessage;
   bool _registrationComplete = false;
 
@@ -84,6 +85,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_initializedFromArgs) {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null && args.containsKey('isOwner')) {
+        _isOwner = args['isOwner'] ?? false;
+      }
+      _initializedFromArgs = true;
+    }
+
     final authProvider = Provider.of<AuthProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 

@@ -12,6 +12,8 @@ import { Locked } from "../pages/auth/Locked";
 import { SessionExpired } from "../pages/auth/SessionExpired";
 import { Dashboard } from "../pages/Dashboard";
 import { E2EDashboard } from "../pages/E2EDashboard";
+import { AdminDashboard } from "../pages/AdminDashboard";
+import { OwnerDashboard } from "../pages/OwnerDashboard";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Framer Motion Animation Settings for form switching
@@ -41,7 +43,7 @@ const AnimatedPage = ({ children }) => (
 );
 
 export const AuthRoutes = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -65,7 +67,11 @@ export const AuthRoutes = () => {
         <Route 
           path="/" 
           element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/auth/login" replace />
+            isAuthenticated ? (
+              user?.role === 'admin' ? <Navigate to="/admin/dashboard" replace /> :
+              user?.role === 'owner' ? <Navigate to="/owner/dashboard" replace /> :
+              <Navigate to="/dashboard" replace />
+            ) : <Navigate to="/auth/login" replace />
           } 
         />
 
@@ -81,11 +87,35 @@ export const AuthRoutes = () => {
         <Route path="/auth/locked" element={<AnimatedPage><Locked /></AnimatedPage>} />
         <Route path="/auth/session-expired" element={<AnimatedPage><SessionExpired /></AnimatedPage>} />
 
+        {/* Admin Dashboard page */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AnimatedPage>
+                <AdminDashboard />
+              </AnimatedPage>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Canteen Owner Dashboard page */}
+        <Route
+          path="/owner/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={['owner']}>
+              <AnimatedPage>
+                <OwnerDashboard />
+              </AnimatedPage>
+            </ProtectedRoute>
+          }
+        />
+
         {/* Guarded dashboard application */}
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['student', 'owner']}>
               <AnimatedPage>
                 <Dashboard />
               </AnimatedPage>
@@ -96,7 +126,7 @@ export const AuthRoutes = () => {
         <Route
           path="/e2e-dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRoles={['student', 'owner', 'admin']}>
               <AnimatedPage>
                 <E2EDashboard />
               </AnimatedPage>

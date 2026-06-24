@@ -11,12 +11,13 @@ import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const Login = () => {
-  const { login, loginWithGoogle, isSessionExpired, clearSessionExpiry } = useAuth();
+  const { login, logout, loginWithGoogle, isSessionExpired, clearSessionExpiry } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
+  const [activeRole, setActiveRole] = useState("student");
 
   useEffect(() => {
     if (isSessionExpired) {
@@ -46,15 +47,30 @@ export const Login = () => {
     setLoading(true);
     setToast(null);
     try {
-      await login(data.email, data.password, data.rememberMe);
+      const user = await login(data.email, data.password, data.rememberMe);
       
+      // Enforce selected role verification
+      if (user?.role !== activeRole) {
+        await logout();
+        const roleLabel = activeRole === "student" ? "Student" : activeRole === "owner" ? "Canteen Owner" : "Admin";
+        const actualRoleLabel = user?.role === "student" ? "Student" : user?.role === "owner" ? "Canteen Owner" : "Admin";
+        throw new Error(`Access denied. This account is registered as a ${actualRoleLabel}, not a ${roleLabel}.`);
+      }
+
       setToast({
         type: "success",
-        message: "Successfully authenticated! Opening dashboard...",
+        message: `Successfully authenticated as ${activeRole === "student" ? "Student" : activeRole === "owner" ? "Canteen Owner" : "Admin"}! Opening dashboard...`,
       });
       
       setTimeout(() => {
-        const origin = location.state?.from?.pathname || "/dashboard";
+        let origin = "/dashboard";
+        if (user?.role === "admin") {
+          origin = "/admin/dashboard";
+        } else if (user?.role === "owner") {
+          origin = "/owner/dashboard";
+        } else {
+          origin = location.state?.from?.pathname || "/dashboard";
+        }
         navigate(origin, { replace: true });
       }, 1200);
     } catch (error) {
@@ -103,6 +119,28 @@ export const Login = () => {
           />
         )}
       </AnimatePresence>
+
+      {/* Role Tabs Switcher */}
+      <div className="flex bg-neutral-100 dark:bg-neutral-900/50 p-1.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-800 mb-5 shadow-inner">
+        {[
+          { id: "student", label: "Student" },
+          { id: "owner", label: "Owner" },
+          { id: "admin", label: "Admin" }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveRole(tab.id)}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all duration-200 cursor-pointer ${
+              activeRole === tab.id
+                ? "bg-brand text-white shadow-md shadow-brand/10 scale-105"
+                : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-450 dark:hover:text-neutral-300"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4.5">
         {/* Email Field */}
@@ -242,9 +280,10 @@ export const Login = () => {
 
         {/* Sign Up Link */}
         <p className="text-center text-xs font-bold text-neutral-400 dark:text-neutral-500 pt-2">
-          New student?{" "}
+          {activeRole === "owner" ? "New canteen partner? " : "New student? "}
           <Link
             to="/auth/register"
+            state={{ role: activeRole === "admin" ? "student" : activeRole }}
             className="text-brand hover:text-brand-hover focus:outline-none font-extrabold"
           >
             Create Account

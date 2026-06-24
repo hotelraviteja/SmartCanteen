@@ -1069,7 +1069,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildCanteenListSection(CanteenProvider provider, bool isDark) {
     final filteredCanteens = provider.canteens.where((c) {
-      return c.name.toLowerCase().contains(_canteenSearchQuery.toLowerCase());
+      return c.status == 'approved' && c.name.toLowerCase().contains(_canteenSearchQuery.toLowerCase());
     }).toList();
 
     return Column(

@@ -362,60 +362,66 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                   : const Text("Sign In", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
             ),
-            if (isStudent) ...[
-              const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-              // Divider
-              Row(
+            // Divider
+            Row(
+              children: [
+                Expanded(child: Divider(color: isDark ? const Color(0xFF1E222B) : Colors.grey[200])),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text("or", style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                ),
+                Expanded(child: Divider(color: isDark ? const Color(0xFF1E222B) : Colors.grey[200])),
+              ],
+            ),
+            const SizedBox(height: 12),
+
+            // Google OAuth Button
+            OutlinedButton(
+              onPressed: authProvider.loading
+                  ? null
+                  : () async {
+                      setState(() {
+                        if (isStudent) {
+                          _studentError = null;
+                        } else {
+                          _ownerError = null;
+                        }
+                      });
+                      try {
+                        await authProvider.loginWithGoogle(isStudent ? 'student' : 'owner');
+                      } catch (e) {
+                        setState(() {
+                          if (isStudent) {
+                            _studentError = e.toString().replaceAll("Exception: ", "");
+                          } else {
+                            _ownerError = e.toString().replaceAll("Exception: ", "");
+                          }
+                        });
+                      }
+                    },
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                side: BorderSide(color: isDark ? const Color(0xFF1E222B) : const Color(0xFFEFECE6)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: Divider(color: isDark ? const Color(0xFF1E222B) : Colors.grey[200])),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text("or", style: TextStyle(fontSize: 12, color: Colors.grey[500])),
+                  Icon(Icons.g_mobiledata_rounded, color: Colors.grey[600], size: 28),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Sign In with Google",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
-                  Expanded(child: Divider(color: isDark ? const Color(0xFF1E222B) : Colors.grey[200])),
                 ],
               ),
-              const SizedBox(height: 12),
-
-              // Google OAuth Button
-              OutlinedButton(
-                onPressed: authProvider.loading
-                    ? null
-                    : () async {
-                        setState(() {
-                          _studentError = null;
-                        });
-                        try {
-                          await authProvider.loginWithGoogle('student');
-                        } catch (e) {
-                          setState(() {
-                            _studentError = e.toString().replaceAll("Exception: ", "");
-                          });
-                        }
-                      },
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(48),
-                  side: BorderSide(color: isDark ? const Color(0xFF1E222B) : const Color(0xFFEFECE6)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.g_mobiledata_rounded, color: Colors.grey[600], size: 28),
-                    const SizedBox(width: 4),
-                    Text(
-                      "Sign In with Google",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
             const SizedBox(height: 16),
 
             // Register Link
@@ -427,7 +433,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/register'),
+                  onPressed: () => Navigator.pushNamed(
+                    context,
+                    '/register',
+                    arguments: {'isOwner': !isStudent},
+                  ),
                   style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero),
                   child: const Text(
                     "Sign Up",

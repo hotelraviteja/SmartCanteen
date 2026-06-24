@@ -97,7 +97,7 @@ class SupabaseService {
         }
         return {
           'success': true,
-          'message': "Registration successful! Please check your email for the verification link.",
+          'message': "Registration successful! You can now log in.",
           'user': UserModel(
             name: fullName,
             email: email,
@@ -140,7 +140,7 @@ class SupabaseService {
 
       return {
         'success': true,
-        'message': "Registration successful! Please check your email for the verification link.",
+        'message': "Registration successful! You can now log in.",
         'user': _mockCurrentUser,
       };
     }
@@ -455,7 +455,7 @@ class SupabaseService {
       try {
         final List<dynamic> data = await Supabase.instance.client
             .from('canteens')
-            .select('id, name, owner_id');
+            .select('id, name, owner_id, status');
         return data.map((json) => CanteenModel.fromJson(json)).toList();
       } catch (e) {
         debugPrint("Error fetching canteens: $e. Falling back to mock.");

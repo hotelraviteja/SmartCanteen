@@ -18,10 +18,21 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     phone TEXT,
     department TEXT DEFAULT 'Computer Science & Engineering',
     academic_year TEXT DEFAULT '3rd Year',
-    role TEXT CHECK (role IN ('student', 'owner')) DEFAULT 'student',
+    role TEXT CHECK (role IN ('student', 'owner', 'admin')) DEFAULT 'student',
     canteen_name TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Helper function to check if a user is an admin without triggering RLS recursion
+CREATE OR REPLACE FUNCTION public.is_admin(user_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = user_id AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Enable RLS for Profiles
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
@@ -32,11 +43,15 @@ CREATE POLICY "Allow public read access to profiles" ON public.profiles
 CREATE POLICY "Allow individual write access to profiles" ON public.profiles
     FOR ALL USING (auth.uid() = id);
 
+CREATE POLICY "Allow admins to manage all profiles" ON public.profiles
+    FOR ALL USING (public.is_admin(auth.uid()));
+
 -- 2. Create Canteens Table
 CREATE TABLE IF NOT EXISTS public.canteens (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name TEXT NOT NULL,
     owner_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    status TEXT CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
@@ -48,6 +63,9 @@ CREATE POLICY "Allow public read access to canteens" ON public.canteens
 
 CREATE POLICY "Allow owners to manage their canteens" ON public.canteens
     FOR ALL USING (auth.uid() = owner_id);
+
+CREATE POLICY "Allow admins to manage all canteens" ON public.canteens
+    FOR ALL USING (public.is_admin(auth.uid()));
 
 -- 3. Create Menu Items Table
 CREATE TABLE IF NOT EXISTS public.menu_items (
@@ -126,7 +144,7 @@ BEGIN
     new.id,
     COALESCE(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)),
     COALESCE(new.raw_user_meta_data->>'student_id', ''),
-    new.phone,
+    COALESCE(new.phone, new.raw_user_meta_data->>'phone'),
     COALESCE(new.raw_user_meta_data->>'department', 'Computer Science & Engineering'),
     COALESCE(new.raw_user_meta_data->>'academic_year', '3rd Year'),
     COALESCE(new.raw_user_meta_data->>'role', 'student'),

@@ -38,13 +38,23 @@ export const AuthProvider = ({ children }) => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session && !storedLocked) {
+          // Fetch profile details from profiles table
+          const { data: profileData } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .maybeSingle();
+
           const userObj = {
-            name: session.user.user_metadata?.full_name || session.user.email.split("@")[0].replace(".", " ").toUpperCase(),
+            id: session.user.id,
+            name: profileData?.full_name || session.user.user_metadata?.full_name || session.user.email.split("@")[0].replace(".", " ").toUpperCase(),
             email: session.user.email,
-            studentId: session.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
-            department: session.user.user_metadata?.department || "Computer Science & Engineering",
-            academicYear: session.user.user_metadata?.academic_year || "3rd Year",
-            phone: session.user.phone || session.user.user_metadata?.phone || "+91 98765 43210"
+            studentId: profileData?.student_id || session.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
+            department: profileData?.department || session.user.user_metadata?.department || "Computer Science & Engineering",
+            academicYear: profileData?.academic_year || session.user.user_metadata?.academic_year || "3rd Year",
+            phone: session.user.phone || profileData?.phone || session.user.user_metadata?.phone || "+91 98765 43210",
+            role: profileData?.role || "student",
+            canteenName: profileData?.canteen_name || ""
           };
           setUser(userObj);
           setToken(session.access_token);
@@ -65,15 +75,31 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
 
     // Catch sign-ins and sign-outs across browser tabs/redirection
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
+        // Fetch profile details from profiles table
+        let profileData = null;
+        try {
+          const { data } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", session.user.id)
+            .maybeSingle();
+          profileData = data;
+        } catch (err) {
+          console.error("Error loading profile on auth state change:", err);
+        }
+
         const userObj = {
-          name: session.user.user_metadata?.full_name || session.user.email.split("@")[0].replace(".", " ").toUpperCase(),
+          id: session.user.id,
+          name: profileData?.full_name || session.user.user_metadata?.full_name || session.user.email.split("@")[0].replace(".", " ").toUpperCase(),
           email: session.user.email,
-          studentId: session.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
-          department: session.user.user_metadata?.department || "Computer Science & Engineering",
-          academicYear: session.user.user_metadata?.academic_year || "3rd Year",
-          phone: session.user.phone || session.user.user_metadata?.phone || "+91 98765 43210"
+          studentId: profileData?.student_id || session.user.user_metadata?.student_id || "CB-" + Math.floor(100000 + Math.random() * 900000),
+          department: profileData?.department || session.user.user_metadata?.department || "Computer Science & Engineering",
+          academicYear: profileData?.academic_year || session.user.user_metadata?.academic_year || "3rd Year",
+          phone: session.user.phone || profileData?.phone || session.user.user_metadata?.phone || "+91 98765 43210",
+          role: profileData?.role || "student",
+          canteenName: profileData?.canteen_name || ""
         };
         setUser(userObj);
         setToken(session.access_token);
@@ -90,7 +116,9 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         setLoading(false);
       } else {
-        setLoading(false);
+        if (!hasHashToken) {
+          setLoading(false);
+        }
       }
     });
 
