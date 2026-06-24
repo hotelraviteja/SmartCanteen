@@ -17,16 +17,16 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize Auth State from Supabase and setup listeners
   useEffect(() => {
+    const hasHashToken = window.location.hash.includes("access_token") || 
+                         window.location.hash.includes("id_token") ||
+                         window.location.hash.includes("type=recovery") ||
+                         window.location.search.includes("access_token");
+
     const initializeAuth = async () => {
       const storedLocked = localStorage.getItem("campusbite_locked") === "true";
       if (storedLocked) {
         setIsLocked(true);
       }
-
-      const hasHashToken = window.location.hash.includes("access_token") || 
-                           window.location.hash.includes("id_token") ||
-                           window.location.hash.includes("type=recovery") ||
-                           window.location.search.includes("access_token");
 
       if (hasHashToken) {
         // Fallback timeout to prevent permanent loading if callback fails

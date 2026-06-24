@@ -6,12 +6,14 @@ export const authService = {
     if (email.startsWith("john.doe")) {
       return {
         user: {
+          id: "mock-student-id-123",
           name: "JOHN DOE",
           email: email,
           studentId: "CS-2026-928",
           department: "Computer Science & Engineering",
           academicYear: "3rd Year",
-          phone: "+91 98765 43210"
+          phone: "+91 98765 43210",
+          role: "student"
         },
         token: "mock-jwt-token-xyz-123"
       };
