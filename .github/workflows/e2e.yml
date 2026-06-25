@@ -167,7 +167,7 @@ jobs:
       - name: Upload Load Testing Report
         uses: actions/upload-artifact@v4
         with:
-          name: load-reports
+          name: k6-report
           path: |
             reports/load-test-report.xlsx
             reports/load-report.xlsx
