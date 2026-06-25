@@ -6,8 +6,8 @@
       "testName": "Verify landing page and register page load",
       "passed": true,
       "error": null,
-      "duration": 856,
-      "timestamp": "2026-06-24T18:56:20.102Z"
+      "duration": 9829,
+      "timestamp": "2026-06-25T07:22:10.087Z"
     },
     {
       "id": "TC-W002",
@@ -15,8 +15,8 @@
       "testName": "Fill signup form and register student",
       "passed": true,
       "error": null,
-      "duration": 8166,
-      "timestamp": "2026-06-24T18:56:28.270Z"
+      "duration": 7793,
+      "timestamp": "2026-06-25T07:22:17.881Z"
     },
     {
       "id": "TC-W003",
@@ -24,8 +24,8 @@
       "testName": "Log in using the newly created student credentials",
       "passed": true,
       "error": null,
-      "duration": 2883,
-      "timestamp": "2026-06-24T18:56:31.154Z"
+      "duration": 3007,
+      "timestamp": "2026-06-25T07:22:20.889Z"
     },
     {
       "id": "TC-W004",
@@ -33,8 +33,8 @@
       "testName": "Simulate credit deposit top-up in wallet",
       "passed": true,
       "error": null,
-      "duration": 1613,
-      "timestamp": "2026-06-24T18:56:32.768Z"
+      "duration": 1629,
+      "timestamp": "2026-06-25T07:22:22.519Z"
     },
     {
       "id": "TC-W005",
@@ -42,8 +42,8 @@
       "testName": "Select a canteen food item and add to cart",
       "passed": true,
       "error": null,
-      "duration": 52,
-      "timestamp": "2026-06-24T18:56:32.821Z"
+      "duration": 57,
+      "timestamp": "2026-06-25T07:22:22.577Z"
     },
     {
       "id": "TC-W006",
@@ -51,8 +51,8 @@
       "testName": "Complete payment and generate digital canteen token pass",
       "passed": true,
       "error": null,
-      "duration": 2059,
-      "timestamp": "2026-06-24T18:56:34.881Z"
+      "duration": 2067,
+      "timestamp": "2026-06-25T07:22:24.645Z"
     },
     {
       "id": "TC-W007",
@@ -60,8 +60,8 @@
       "testName": "Claim order and pick up food",
       "passed": true,
       "error": null,
-      "duration": 1534,
-      "timestamp": "2026-06-24T18:56:36.416Z"
+      "duration": 1551,
+      "timestamp": "2026-06-25T07:22:26.197Z"
     },
     {
       "id": "TC-W008",
@@ -69,8 +69,8 @@
       "testName": "Toggle and read notifications tray",
       "passed": true,
       "error": null,
-      "duration": 1068,
-      "timestamp": "2026-06-24T18:56:37.485Z"
+      "duration": 1066,
+      "timestamp": "2026-06-25T07:22:27.264Z"
     },
     {
       "id": "TC-W009",
@@ -78,57 +78,57 @@
       "testName": "Simulate session expiration and redirect to session expired screen",
       "passed": true,
       "error": null,
-      "duration": 912,
-      "timestamp": "2026-06-24T18:56:38.397Z"
+      "duration": 916,
+      "timestamp": "2026-06-25T07:22:28.182Z"
     }
   ],
   "logs": [
-    "[2026-06-24T18:56:18.317Z] [INFO] Starting SmartCanteen Web Tests...",
-    "[2026-06-24T18:56:18.354Z] [INFO] Selected Base URL: http://localhost:5173",
-    "[2026-06-24T18:56:19.245Z] [INFO] WebDriver initialized successfully",
-    "[2026-06-24T18:56:19.246Z] [INFO] Running [TC-W001] - Verify landing page and register page load...",
-    "[2026-06-24T18:56:19.247Z] [INFO] Navigating to register page at http://localhost:5173/auth/register",
-    "[2026-06-24T18:56:20.102Z] [INFO] Registration page and form loaded successfully",
-    "[2026-06-24T18:56:20.102Z] [INFO] [TC-W001] - Verify landing page and register page load : PASSED (856ms)",
-    "[2026-06-24T18:56:20.104Z] [INFO] Running [TC-W002] - Fill signup form and register student...",
-    "[2026-06-24T18:56:22.130Z] [INFO] Registration complete page is visible",
-    "[2026-06-24T18:56:28.270Z] [INFO] Redirected to login page successfully",
-    "[2026-06-24T18:56:28.270Z] [INFO] [TC-W002] - Fill signup form and register student : PASSED (8166ms)",
-    "[2026-06-24T18:56:28.271Z] [INFO] Running [TC-W003] - Log in using the newly created student credentials...",
-    "[2026-06-24T18:56:30.865Z] [INFO] Successfully logged in and redirected to dashboard",
-    "[2026-06-24T18:56:31.154Z] [INFO] User name verified on dashboard",
-    "[2026-06-24T18:56:31.154Z] [INFO] [TC-W003] - Log in using the newly created student credentials : PASSED (2883ms)",
-    "[2026-06-24T18:56:31.155Z] [INFO] Running [TC-W004] - Simulate credit deposit top-up in wallet...",
-    "[2026-06-24T18:56:31.247Z] [INFO] Clicked Add Cash button",
-    "[2026-06-24T18:56:32.768Z] [INFO] Wallet credit successfully verified",
-    "[2026-06-24T18:56:32.768Z] [INFO] [TC-W004] - Simulate credit deposit top-up in wallet : PASSED (1613ms)",
-    "[2026-06-24T18:56:32.769Z] [INFO] Running [TC-W005] - Select a canteen food item and add to cart...",
-    "[2026-06-24T18:56:32.779Z] [INFO] Found 2 menu items available to add",
-    "[2026-06-24T18:56:32.804Z] [INFO] Clicked first ADD item button",
-    "[2026-06-24T18:56:32.821Z] [INFO] Checkout button Pay & Generate Pass is active",
-    "[2026-06-24T18:56:32.821Z] [INFO] [TC-W005] - Select a canteen food item and add to cart : PASSED (52ms)",
-    "[2026-06-24T18:56:32.822Z] [INFO] Running [TC-W006] - Complete payment and generate digital canteen token pass...",
-    "[2026-06-24T18:56:32.865Z] [INFO] Clicked Checkout button",
-    "[2026-06-24T18:56:34.881Z] [INFO] Digital token pass generated successfully",
-    "[2026-06-24T18:56:34.881Z] [INFO] [TC-W006] - Complete payment and generate digital canteen token pass : PASSED (2059ms)",
-    "[2026-06-24T18:56:34.882Z] [INFO] Running [TC-W007] - Claim order and pick up food...",
-    "[2026-06-24T18:56:34.914Z] [INFO] Clicked Claim Order button",
-    "[2026-06-24T18:56:36.416Z] [INFO] Claim Order flow verified",
-    "[2026-06-24T18:56:36.416Z] [INFO] [TC-W007] - Claim order and pick up food : PASSED (1534ms)",
-    "[2026-06-24T18:56:36.417Z] [INFO] Running [TC-W008] - Toggle and read notifications tray...",
-    "[2026-06-24T18:56:36.464Z] [INFO] Clicked notifications dropdown button",
-    "[2026-06-24T18:56:37.485Z] [INFO] System notification checked",
-    "[2026-06-24T18:56:37.485Z] [INFO] [TC-W008] - Toggle and read notifications tray : PASSED (1068ms)",
-    "[2026-06-24T18:56:37.485Z] [INFO] Running [TC-W009] - Simulate session expiration and redirect to session expired screen...",
-    "[2026-06-24T18:56:37.529Z] [INFO] Clicked Session Expire simulation button",
-    "[2026-06-24T18:56:38.379Z] [INFO] Redirected to session expired screen",
-    "[2026-06-24T18:56:38.397Z] [INFO] Session expiration redirection validated successfully",
-    "[2026-06-24T18:56:38.397Z] [INFO] [TC-W009] - Simulate session expiration and redirect to session expired screen : PASSED (912ms)",
-    "[2026-06-24T18:56:38.398Z] [INFO] Closing WebDriver..."
+    "[2026-06-25T07:21:59.371Z] [INFO] Starting SmartCanteen Web Tests...",
+    "[2026-06-25T07:21:59.407Z] [INFO] Selected Base URL: http://localhost:5173",
+    "[2026-06-25T07:22:00.255Z] [INFO] WebDriver initialized successfully",
+    "[2026-06-25T07:22:00.257Z] [INFO] Running [TC-W001] - Verify landing page and register page load...",
+    "[2026-06-25T07:22:00.257Z] [INFO] Navigating to register page at http://localhost:5173/auth/register",
+    "[2026-06-25T07:22:10.086Z] [INFO] Registration page and form loaded successfully",
+    "[2026-06-25T07:22:10.087Z] [INFO] [TC-W001] - Verify landing page and register page load : PASSED (9829ms)",
+    "[2026-06-25T07:22:10.088Z] [INFO] Running [TC-W002] - Fill signup form and register student...",
+    "[2026-06-25T07:22:11.728Z] [INFO] Registration complete page is visible",
+    "[2026-06-25T07:22:17.881Z] [INFO] Redirected to login page successfully",
+    "[2026-06-25T07:22:17.881Z] [INFO] [TC-W002] - Fill signup form and register student : PASSED (7793ms)",
+    "[2026-06-25T07:22:17.882Z] [INFO] Running [TC-W003] - Log in using the newly created student credentials...",
+    "[2026-06-25T07:22:20.576Z] [INFO] Successfully logged in and redirected to dashboard",
+    "[2026-06-25T07:22:20.889Z] [INFO] User name verified on dashboard",
+    "[2026-06-25T07:22:20.889Z] [INFO] [TC-W003] - Log in using the newly created student credentials : PASSED (3007ms)",
+    "[2026-06-25T07:22:20.890Z] [INFO] Running [TC-W004] - Simulate credit deposit top-up in wallet...",
+    "[2026-06-25T07:22:20.995Z] [INFO] Clicked Add Cash button",
+    "[2026-06-25T07:22:22.519Z] [INFO] Wallet credit successfully verified",
+    "[2026-06-25T07:22:22.519Z] [INFO] [TC-W004] - Simulate credit deposit top-up in wallet : PASSED (1629ms)",
+    "[2026-06-25T07:22:22.520Z] [INFO] Running [TC-W005] - Select a canteen food item and add to cart...",
+    "[2026-06-25T07:22:22.530Z] [INFO] Found 2 menu items available to add",
+    "[2026-06-25T07:22:22.560Z] [INFO] Clicked first ADD item button",
+    "[2026-06-25T07:22:22.577Z] [INFO] Checkout button Pay & Generate Pass is active",
+    "[2026-06-25T07:22:22.577Z] [INFO] [TC-W005] - Select a canteen food item and add to cart : PASSED (57ms)",
+    "[2026-06-25T07:22:22.578Z] [INFO] Running [TC-W006] - Complete payment and generate digital canteen token pass...",
+    "[2026-06-25T07:22:22.624Z] [INFO] Clicked Checkout button",
+    "[2026-06-25T07:22:24.645Z] [INFO] Digital token pass generated successfully",
+    "[2026-06-25T07:22:24.646Z] [INFO] [TC-W006] - Complete payment and generate digital canteen token pass : PASSED (2067ms)",
+    "[2026-06-25T07:22:24.646Z] [INFO] Running [TC-W007] - Claim order and pick up food...",
+    "[2026-06-25T07:22:24.687Z] [INFO] Clicked Claim Order button",
+    "[2026-06-25T07:22:26.197Z] [INFO] Claim Order flow verified",
+    "[2026-06-25T07:22:26.197Z] [INFO] [TC-W007] - Claim order and pick up food : PASSED (1551ms)",
+    "[2026-06-25T07:22:26.198Z] [INFO] Running [TC-W008] - Toggle and read notifications tray...",
+    "[2026-06-25T07:22:26.244Z] [INFO] Clicked notifications dropdown button",
+    "[2026-06-25T07:22:27.264Z] [INFO] System notification checked",
+    "[2026-06-25T07:22:27.264Z] [INFO] [TC-W008] - Toggle and read notifications tray : PASSED (1066ms)",
+    "[2026-06-25T07:22:27.265Z] [INFO] Running [TC-W009] - Simulate session expiration and redirect to session expired screen...",
+    "[2026-06-25T07:22:27.299Z] [INFO] Clicked Session Expire simulation button",
+    "[2026-06-25T07:22:28.150Z] [INFO] Redirected to session expired screen",
+    "[2026-06-25T07:22:28.181Z] [INFO] Session expiration redirection validated successfully",
+    "[2026-06-25T07:22:28.182Z] [INFO] [TC-W009] - Simulate session expiration and redirect to session expired screen : PASSED (916ms)",
+    "[2026-06-25T07:22:28.183Z] [INFO] Closing WebDriver..."
   ],
   "passed": 9,
   "failed": 0,
-  "totalDuration": 20196,
+  "totalDuration": 29018,
   "passPercentage": 100,
-  "runDate": "2026-06-24T18:56:38.514Z"
+  "runDate": "2026-06-25T07:22:28.420Z"
 }
