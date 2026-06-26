@@ -158,11 +158,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Performance Benchmarks
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Mock Servers
+        run: node website/test/mock-servers.js &
+
+      - name: Create Reports Directory
+        run: mkdir -p website/test/reports
+
+      - name: Install k6
         run: |
-          echo "Running load tests with simulated 500 concurrent connections..."
-          echo "Latency is within bounds (<800ms) for all 300 test cases."
-          exit 0
+          curl -L https://github.com/grafana/k6/releases/download/v0.50.0/k6-v0.50.0-linux-amd64.tar.gz | tar -xz
+          sudo mv k6-v0.50.0-linux-amd64/k6 /usr/local/bin/
+
+      - name: Run k6 Load test
+        run: k6 run --summary-export=website/test/reports/summary.json website/test/k6-load-test.js
 
       - name: Upload Load Testing Report
         uses: actions/upload-artifact@v4
@@ -171,6 +184,7 @@ jobs:
           path: |
             reports/load-test-report.xlsx
             reports/load-report.xlsx
+            website/test/reports/
 
   compile:
     name: Compile Master Report & Deploy
