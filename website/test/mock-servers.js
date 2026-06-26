@@ -1,4 +1,4 @@
-const http = require('http');
+import http from 'http';
 
 // React app mock server on [::1]:5173
 const reactServer = http.createServer((req, res) => {
