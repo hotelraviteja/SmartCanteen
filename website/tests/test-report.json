@@ -2,69 +2,97 @@
   "results": [
     {
       "testName": "Signup - Create student account and redirect",
-      "passed": false,
-      "error": "unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:47:36.136Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:06.102Z"
     },
     {
       "testName": "Login - Login with student account",
-      "passed": false,
-      "error": "unknown error: net::ERR_CONNECTION_REFUSED\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:47:36.417Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:09.101Z"
     },
     {
       "testName": "Dashboard - Deposit money to wallet",
-      "passed": false,
-      "error": "no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"button[title=\"Add Cash\"]\"}\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:47:46.453Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:10.669Z"
     },
     {
       "testName": "Dashboard - Add menu item to cart",
-      "passed": false,
-      "error": "No menu items available with an \"ADD\" button",
-      "timestamp": "2026-06-23T07:47:56.483Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:10.719Z"
     },
     {
       "testName": "Dashboard - Pay & Generate Token",
-      "passed": false,
-      "error": "no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//button[contains(text(), 'Pay & Generate Pass')]\"}\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:48:06.527Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:12.803Z"
     },
     {
       "testName": "Dashboard - Claim and pick up order",
-      "passed": false,
-      "error": "No claim order buttons found",
-      "timestamp": "2026-06-23T07:48:16.580Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:14.339Z"
     },
     {
       "testName": "Dashboard - Open notifications panel",
-      "passed": false,
-      "error": "no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"button[aria-label=\"View notifications\"]\"}\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:48:26.629Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:15.419Z"
     },
     {
       "testName": "Simulation - Session Timeout redirection",
-      "passed": false,
-      "error": "no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//button[contains(text(), 'Expire')]\"}\n  (Session info: chrome=149.0.7827.115)",
-      "timestamp": "2026-06-23T07:48:36.687Z"
+      "passed": true,
+      "error": null,
+      "timestamp": "2026-06-27T07:19:16.334Z"
     }
   ],
   "logs": [
-    "[2026-06-23T07:47:29.407Z] [INFO] Initializing WebDriver...",
-    "[2026-06-23T07:47:31.208Z] [INFO] WebDriver initialized successfully in headed mode",
-    "[2026-06-23T07:47:31.211Z] [INFO] Starting Signup test...",
-    "[2026-06-23T07:47:31.212Z] [INFO] Navigating to register page at http://localhost:5174/auth/register",
-    "[2026-06-23T07:47:36.146Z] [INFO] Starting Login test...",
-    "[2026-06-23T07:47:36.157Z] [INFO] Navigating to login page...",
-    "[2026-06-23T07:47:36.425Z] [INFO] Testing wallet deposit...",
-    "[2026-06-23T07:47:46.457Z] [INFO] Testing adding menu items to cart...",
-    "[2026-06-23T07:47:56.483Z] [INFO] Found 0 menu items available to add",
-    "[2026-06-23T07:47:56.487Z] [INFO] Testing checkout payment and token generation...",
-    "[2026-06-23T07:48:06.530Z] [INFO] Testing token pickup collection...",
-    "[2026-06-23T07:48:16.584Z] [INFO] Testing notifications menu toggle...",
-    "[2026-06-23T07:48:26.633Z] [INFO] Testing simulated session timeout...",
-    "[2026-06-23T07:48:36.691Z] [INFO] Closing WebDriver..."
+    "[2026-06-27T07:18:51.868Z] [INFO] Initializing WebDriver...",
+    "[2026-06-27T07:18:53.030Z] [INFO] WebDriver initialized successfully in headed mode",
+    "[2026-06-27T07:18:53.032Z] [INFO] Starting Signup test...",
+    "[2026-06-27T07:18:53.032Z] [INFO] Navigating to register page at http://localhost:5173/auth/register",
+    "[2026-06-27T07:18:58.355Z] [INFO] Cleared localStorage for a fresh test run",
+    "[2026-06-27T07:18:58.374Z] [INFO] Register form loaded successfully",
+    "[2026-06-27T07:18:58.472Z] [INFO] Entered full name",
+    "[2026-06-27T07:18:58.539Z] [INFO] Entered student roll no.",
+    "[2026-06-27T07:18:58.605Z] [INFO] Entered college email",
+    "[2026-06-27T07:18:58.672Z] [INFO] Entered mobile number",
+    "[2026-06-27T07:18:59.107Z] [INFO] Entered password and confirm password",
+    "[2026-06-27T07:18:59.135Z] [INFO] Accepted terms and conditions",
+    "[2026-06-27T07:18:59.225Z] [INFO] Clicked create account submit button",
+    "[2026-06-27T07:19:00.039Z] [INFO] Registration complete success message detected",
+    "[2026-06-27T07:19:06.102Z] [INFO] Successfully redirected to login page: http://localhost:5173/auth/login",
+    "[2026-06-27T07:19:06.104Z] [INFO] Starting Login test...",
+    "[2026-06-27T07:19:06.386Z] [INFO] Login page loaded",
+    "[2026-06-27T07:19:06.532Z] [INFO] Entered login credentials",
+    "[2026-06-27T07:19:06.624Z] [INFO] Clicked Sign In button",
+    "[2026-06-27T07:19:08.767Z] [INFO] Successfully logged in and redirected to dashboard",
+    "[2026-06-27T07:19:09.064Z] [INFO] Dashboard welcome header rendered",
+    "[2026-06-27T07:19:09.101Z] [INFO] Welcome message verified successfully",
+    "[2026-06-27T07:19:09.103Z] [INFO] Testing wallet deposit...",
+    "[2026-06-27T07:19:09.141Z] [INFO] Clicked Add Cash button via JS click",
+    "[2026-06-27T07:19:10.669Z] [INFO] Wallet credited by ₹100 successfully",
+    "[2026-06-27T07:19:10.670Z] [INFO] Testing adding menu items to cart...",
+    "[2026-06-27T07:19:10.680Z] [INFO] Found 2 menu items available to add",
+    "[2026-06-27T07:19:10.705Z] [INFO] Added first item to cart",
+    "[2026-06-27T07:19:10.719Z] [INFO] Cart billing section updated and checkout button is active",
+    "[2026-06-27T07:19:10.720Z] [INFO] Testing checkout payment and token generation...",
+    "[2026-06-27T07:19:10.776Z] [INFO] Clicked Checkout button via JS click",
+    "[2026-06-27T07:19:12.803Z] [INFO] Digital token pass generated successfully",
+    "[2026-06-27T07:19:12.803Z] [INFO] Testing token pickup collection...",
+    "[2026-06-27T07:19:12.832Z] [INFO] Clicked Claim Order pickup button via JS click",
+    "[2026-06-27T07:19:14.339Z] [INFO] Testing notifications menu toggle...",
+    "[2026-06-27T07:19:14.385Z] [INFO] Opened notifications dropdown via JS click",
+    "[2026-06-27T07:19:15.419Z] [INFO] Notifications dropdown content verified",
+    "[2026-06-27T07:19:15.420Z] [INFO] Testing simulated session timeout...",
+    "[2026-06-27T07:19:15.456Z] [INFO] Clicked simulated Expire button via JS click",
+    "[2026-06-27T07:19:16.317Z] [INFO] Successfully redirected to /auth/session-expired page",
+    "[2026-06-27T07:19:16.334Z] [INFO] Session Expired page verified",
+    "[2026-06-27T07:19:16.335Z] [INFO] Closing WebDriver..."
   ],
-  "passed": 0,
-  "failed": 8
+  "passed": 8,
+  "failed": 0
 }

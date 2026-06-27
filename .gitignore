@@ -29,3 +29,6 @@ dist-ssr
 !.env.example
 .env.local
 
+# Android build outputs and binary files
+*.apk
+canteen_mobile.apk

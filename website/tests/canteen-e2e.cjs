@@ -14,7 +14,7 @@ require('chromedriver');
 const reportGenerator = require('./reportGenerator.cjs');
 
 // Test configuration
-const BASE_URL = process.env.BASE_URL || 'http://localhost:5174';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:5173';
 const TEST_USER = {
   email: 'john.doe@college.edu',
   fullName: 'JOHN DOE',
@@ -103,6 +103,14 @@ describe('SmartCanteen E2E Workflow', function() {
         // Navigate to register page
         log(`Navigating to register page at ${BASE_URL}/auth/register`);
         await driver.get(`${BASE_URL}/auth/register`);
+
+        // Clear localStorage to ensure a clean slate of balance and transactions
+        try {
+          await driver.executeScript("localStorage.clear();");
+          log('Cleared localStorage for a fresh test run');
+        } catch (e) {
+          log(`Warning: Failed to clear localStorage: ${e.message}`, 'warn');
+        }
 
         // Wait for register form to load
         await driver.wait(until.elementLocated(By.css('form')), 15000);
@@ -235,8 +243,8 @@ describe('SmartCanteen E2E Workflow', function() {
 
         // Verify initial deposit top-up triggers balance update
         const addMoneyBtn = await driver.findElement(By.css('button[title="Add Cash"]'));
-        await addMoneyBtn.click();
-        log('Clicked Add Cash button');
+        await driver.executeScript("arguments[0].click();", addMoneyBtn);
+        log('Clicked Add Cash button via JS click');
 
         // Let the state update and toast disappear
         await driver.sleep(1500);
@@ -249,6 +257,13 @@ describe('SmartCanteen E2E Workflow', function() {
           log('Wallet credited by ₹100 successfully');
           addResult('Dashboard - Deposit money to wallet', true);
         } else {
+          try {
+            const balanceEl = await driver.findElement(By.xpath("//*[contains(text(), '₹')]"));
+            const balanceText = await balanceEl.getText();
+            log(`DEBUG: Actual balance text found: ${balanceText}`);
+          } catch (e) {
+            log(`DEBUG: Could not find balance element with text content containing ₹: ${e.message}`);
+          }
           throw new Error('Balance did not reflect top-up amount');
         }
       } catch (error) {

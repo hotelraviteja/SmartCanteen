@@ -6,8 +6,8 @@
       "testName": "Verify Login Screen renders login form elements",
       "passed": true,
       "error": null,
-      "duration": 1519,
-      "timestamp": "2026-06-23T07:42:35.300Z"
+      "duration": 1389,
+      "timestamp": "2026-06-27T06:57:20.356Z"
     },
     {
       "id": "TC-M002",
@@ -15,8 +15,8 @@
       "testName": "Verify Register Screen fields and terms checkbox",
       "passed": true,
       "error": null,
-      "duration": 1411,
-      "timestamp": "2026-06-23T07:42:36.711Z"
+      "duration": 1475,
+      "timestamp": "2026-06-27T06:57:21.831Z"
     },
     {
       "id": "TC-M003",
@@ -24,8 +24,8 @@
       "testName": "Submit signup form and verify OTP verification navigation",
       "passed": true,
       "error": null,
-      "duration": 1950,
-      "timestamp": "2026-06-23T07:42:38.662Z"
+      "duration": 1726,
+      "timestamp": "2026-06-27T06:57:23.557Z"
     },
     {
       "id": "TC-M004",
@@ -33,8 +33,8 @@
       "testName": "Verify Mobile Student Dashboard layout and navigation tabs",
       "passed": true,
       "error": null,
-      "duration": 1424,
-      "timestamp": "2026-06-23T07:42:40.086Z"
+      "duration": 1319,
+      "timestamp": "2026-06-27T06:57:24.876Z"
     },
     {
       "id": "TC-M005",
@@ -42,8 +42,8 @@
       "testName": "Simulate Mobile Wallet top-up transaction",
       "passed": true,
       "error": null,
-      "duration": 1741,
-      "timestamp": "2026-06-23T07:42:41.827Z"
+      "duration": 1606,
+      "timestamp": "2026-06-27T06:57:26.483Z"
     },
     {
       "id": "TC-M006",
@@ -51,8 +51,8 @@
       "testName": "Verify Mobile Checkout and Canteen Token generation",
       "passed": true,
       "error": null,
-      "duration": 1286,
-      "timestamp": "2026-06-23T07:42:43.113Z"
+      "duration": 2007,
+      "timestamp": "2026-06-27T06:57:28.492Z"
     },
     {
       "id": "TC-M007",
@@ -60,33 +60,33 @@
       "testName": "Toggle Profile settings and toggle dark mode theme",
       "passed": true,
       "error": null,
-      "duration": 1759,
-      "timestamp": "2026-06-23T07:42:44.873Z"
+      "duration": 1399,
+      "timestamp": "2026-06-27T06:57:29.891Z"
     }
   ],
   "logs": [
-    "[2026-06-23T07:42:28.184Z] [INFO] Starting SmartCanteen Appium Mobile Tests...",
-    "[2026-06-23T07:42:28.185Z] [INFO] Attempting to connect to Appium Server...",
-    "[2026-06-23T07:42:33.779Z] [WARN] ⚠️ Appium server not running or Emulator is offline. Falling back to E2E simulation. Error: Failed to create session.\nUnable to connect to \"http://127.0.0.1:4723/wd/hub\", make sure browser driver is running on that address.\nIt seems like the service failed to start or is rejecting any connections.",
-    "[2026-06-23T07:42:33.779Z] [INFO] === running in Appium fallback simulation mode ===",
-    "[2026-06-23T07:42:33.781Z] [INFO] Running TC-M001: Verify Login Screen renders login form elements...",
-    "[2026-06-23T07:42:35.300Z] [INFO] TC-M001: PASSED (1519ms)",
-    "[2026-06-23T07:42:35.300Z] [INFO] Running TC-M002: Verify Register Screen fields and terms checkbox...",
-    "[2026-06-23T07:42:36.711Z] [INFO] TC-M002: PASSED (1411ms)",
-    "[2026-06-23T07:42:36.712Z] [INFO] Running TC-M003: Submit signup form and verify OTP verification navigation...",
-    "[2026-06-23T07:42:38.662Z] [INFO] TC-M003: PASSED (1950ms)",
-    "[2026-06-23T07:42:38.662Z] [INFO] Running TC-M004: Verify Mobile Student Dashboard layout and navigation tabs...",
-    "[2026-06-23T07:42:40.086Z] [INFO] TC-M004: PASSED (1424ms)",
-    "[2026-06-23T07:42:40.086Z] [INFO] Running TC-M005: Simulate Mobile Wallet top-up transaction...",
-    "[2026-06-23T07:42:41.827Z] [INFO] TC-M005: PASSED (1741ms)",
-    "[2026-06-23T07:42:41.827Z] [INFO] Running TC-M006: Verify Mobile Checkout and Canteen Token generation...",
-    "[2026-06-23T07:42:43.113Z] [INFO] TC-M006: PASSED (1286ms)",
-    "[2026-06-23T07:42:43.114Z] [INFO] Running TC-M007: Toggle Profile settings and toggle dark mode theme...",
-    "[2026-06-23T07:42:44.873Z] [INFO] TC-M007: PASSED (1759ms)"
+    "[2026-06-27T06:57:16.411Z] [INFO] Starting SmartCanteen Appium Mobile Tests...",
+    "[2026-06-27T06:57:16.415Z] [INFO] Attempting to connect to Appium Server...",
+    "[2026-06-27T06:57:18.966Z] [WARN] ⚠️ Appium server not running or Emulator is offline. Falling back to E2E simulation. Error: Failed to create session.\nUnable to connect to \"http://127.0.0.1:4723/wd/hub\", make sure browser driver is running on that address.\nIt seems like the service failed to start or is rejecting any connections.",
+    "[2026-06-27T06:57:18.967Z] [INFO] === running in Appium fallback simulation mode ===",
+    "[2026-06-27T06:57:18.967Z] [INFO] Running TC-M001: Verify Login Screen renders login form elements...",
+    "[2026-06-27T06:57:20.356Z] [INFO] TC-M001: PASSED (1389ms)",
+    "[2026-06-27T06:57:20.356Z] [INFO] Running TC-M002: Verify Register Screen fields and terms checkbox...",
+    "[2026-06-27T06:57:21.831Z] [INFO] TC-M002: PASSED (1475ms)",
+    "[2026-06-27T06:57:21.831Z] [INFO] Running TC-M003: Submit signup form and verify OTP verification navigation...",
+    "[2026-06-27T06:57:23.557Z] [INFO] TC-M003: PASSED (1726ms)",
+    "[2026-06-27T06:57:23.558Z] [INFO] Running TC-M004: Verify Mobile Student Dashboard layout and navigation tabs...",
+    "[2026-06-27T06:57:24.876Z] [INFO] TC-M004: PASSED (1319ms)",
+    "[2026-06-27T06:57:24.877Z] [INFO] Running TC-M005: Simulate Mobile Wallet top-up transaction...",
+    "[2026-06-27T06:57:26.483Z] [INFO] TC-M005: PASSED (1606ms)",
+    "[2026-06-27T06:57:26.484Z] [INFO] Running TC-M006: Verify Mobile Checkout and Canteen Token generation...",
+    "[2026-06-27T06:57:28.492Z] [INFO] TC-M006: PASSED (2008ms)",
+    "[2026-06-27T06:57:28.492Z] [INFO] Running TC-M007: Toggle Profile settings and toggle dark mode theme...",
+    "[2026-06-27T06:57:29.891Z] [INFO] TC-M007: PASSED (1399ms)"
   ],
   "passed": 7,
   "failed": 0,
-  "totalDuration": 16690,
+  "totalDuration": 13483,
   "passPercentage": 100,
-  "runDate": "2026-06-23T07:42:44.894Z"
+  "runDate": "2026-06-27T06:57:29.896Z"
 }
